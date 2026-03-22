@@ -42,3 +42,7 @@ paginate_path: /page:num/
 
 # 날짜 형식
 date_format: "%Y년 %m월 %d일"
+
+# 페이지 포함
+include:
+  - _pages
