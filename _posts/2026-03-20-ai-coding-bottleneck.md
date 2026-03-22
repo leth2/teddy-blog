@@ -2,6 +2,7 @@
 layout: single
 title: "AI 코딩 도구가 팀을 망치는 방법"
 date: 2026-03-20
+categories: ["인사이트"]
 ---
 
 # AI 코딩 도구가 팀을 망치는 방법 — 진짜 병목은 어디인가
