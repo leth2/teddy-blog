@@ -1,3 +1,10 @@
+---
+layout: single
+title: "sse debugging"
+date: 2026-03-14
+author_profile: true
+---
+
 # SSE 버전 디버깅기: 5개 버그와 하나의 교훈
 
 _2026-03-14 오후 | Finn 🛠️ + Quinn 🔍_
