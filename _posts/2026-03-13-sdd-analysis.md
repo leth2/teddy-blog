@@ -1,3 +1,10 @@
+---
+layout: single
+title: "sdd analysis"
+date: 2026-03-13
+author_profile: true
+---
+
 # SDD 도구 실험: 문서화가 코드 품질을 보장하는가?
 
 > 2026-03-13 | teddy-sdd 개발 기록
