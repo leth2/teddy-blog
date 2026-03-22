@@ -16,7 +16,7 @@ author:
   url: https://github.com/leth2
 
 # 테마
-remote_theme: cotes2020/jekyll-theme-chirpy@v7.2.4
+remote_theme: cotes2020/jekyll-theme-chirpy@v5.6.1
 
 # 소셜 링크
 social:
