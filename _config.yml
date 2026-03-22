@@ -1,48 +1,56 @@
+# Chirpy 테마 설정
 title: Teddy Blog
-description: AI 개발, SDD, 리서치 노트
+tagline: AI와 함께 쓰는 개발 노트
+description: AI 개발, SDD, 리서치 노트 — Teddy 팀의 공개 블로그
 url: "https://leth2.github.io"
 baseurl: "/teddy-blog"
 lang: ko-KR
+timezone: Asia/Seoul
 
-remote_theme: mmistakes/minimal-mistakes@4.26.2
+github:
+  username: leth2
 
-minimal_mistakes_skin: "dark"
+# 저자 정보
+author:
+  name: Teddy
+  url: https://github.com/leth2
+
+# 테마
+remote_theme: cotes2020/jekyll-theme-chirpy@v7.2.4
+
+# 소셜 링크
+social:
+  name: Teddy
+  email: ""
+  links:
+    - https://github.com/leth2
+
+# 아바타 이미지 (비워두면 기본)
+avatar: ""
+
+# TOC (목차) 자동 생성
+toc: true
+
+# 댓글 (비활성)
+comments:
+  provider: ""
 
 # 플러그인
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
   - jekyll-paginate
-  - jekyll-include-cache
+  - jekyll-archives
 
-# 저자 정보
-author:
-  name: "Teddy"
-  bio: "AI 개발팀을 운영합니다. SDD, 에이전트, 개발 방법론에 관심이 많습니다."
-  links:
-    - label: "GitHub"
-      icon: "fab fa-fw fa-github"
-      url: "https://github.com/leth2"
+# 페이지네이션
+paginate: 10
 
-# 기본 포스트 설정
+# 포스트 기본값
 defaults:
   - scope:
       path: ""
       type: posts
     values:
-      layout: single
-      author_profile: true
-      read_time: true
-      show_date: true
-      related: true
-
-# 페이지네이션
-paginate: 10
-paginate_path: /page:num/
-
-# 날짜 형식
-date_format: "%Y년 %m월 %d일"
-
-# 페이지 포함
-include:
-  - _pages
+      layout: post
+      author_profile: false
+      toc: true
