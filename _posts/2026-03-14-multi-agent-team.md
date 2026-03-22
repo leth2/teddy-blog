@@ -2,6 +2,7 @@
 layout: single
 title: "multi agent team"
 date: 2026-03-14
+categories: ["개발기록"]
 author_profile: true
 ---
 
