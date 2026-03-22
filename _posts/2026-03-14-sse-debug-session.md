@@ -1,3 +1,10 @@
+---
+layout: single
+title: "sse debug session"
+date: 2026-03-14
+author_profile: true
+---
+
 # SSE 에이전트 디버깅 — 두 번째 멀티에이전트 세션
 
 **날짜:** 2026-03-14  
