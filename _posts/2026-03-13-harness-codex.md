@@ -1,3 +1,10 @@
+---
+layout: single
+title: "harness codex"
+date: 2026-03-13
+author_profile: true
+---
+
 # AI가 코드를 100만 줄 썼다 — 사람이 한 줄도 안 건드리고
 
 > 2026-03-13 | 원문: [하네스 엔지니어링: 에이전트 우선 세계에서 Codex 활용하기](https://news.hada.io/topic?id=27457)
