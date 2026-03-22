@@ -4,6 +4,9 @@
 
 @charset "utf-8";
 
+/* 테마 변수 오버라이드 - import 전에 선언해야 적용됨 */
+$max-width: 100% !default;
+
 @import "minimal-mistakes/skins/dark";
 @import "minimal-mistakes";
 
@@ -16,9 +19,17 @@ html {
   font-size: 14.4px;
 }
 
-/* 본문 폰트 */
+/* max-width 완전 제거 */
+#main {
+  max-width: 100% !important;
+}
+
+.masthead__inner-wrap {
+  max-width: 100% !important;
+}
+
+/* 본문 라인 간격 */
 .page__content {
-  font-size: 0.8em;
   line-height: 1.8;
 }
 
