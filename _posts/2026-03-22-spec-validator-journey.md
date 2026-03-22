@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: single
 title: "스펙 품질을 숫자로 측정할 수 있을까 — Slop Detector 개발기 1편"
 date: 2026-03-22 00:00:00 +0900
 categories: [개발기록]
