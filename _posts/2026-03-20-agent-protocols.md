@@ -1,8 +1,9 @@
 ---
-layout: single
-title: "AI 에이전트 프로토콜 표준화 흐름"
-date: 2026-03-20
-categories: ["인사이트"]
+layout: post
+title: "AI 에이전트 프로토콜 표준화 흐름 — MCP부터 AG-UI까지"
+date: 2026-03-20 00:00:00 +0900
+categories: [인사이트]
+tags: [ai, sdd, 개발방법론]
 ---
 
 # AI 에이전트 생태계의 표준화 흐름 — MCP부터 AG-UI까지
