@@ -4,6 +4,7 @@
 
 @charset "utf-8";
 
+/* 테마 변수 오버라이드 - import 전에 선언해야 적용됨 */
 $max-width: 100% !default;
 
 @import "minimal-mistakes/skins/dark";
@@ -13,18 +14,12 @@ $max-width: 100% !default;
    커스텀 스타일
    ===================== */
 
-/* 전체 기본 폰트 크기 (기본 16px 유지, 본문만 조정) */
+/* 전체 폰트 크기 90% */
 html {
   font-size: 16px;
 }
 
-/* 본문 폰트 크기 — 읽기 편한 크기 */
-.page__content {
-  font-size: 1em;
-  line-height: 1.75;
-}
-
-/* max-width 제거 */
+/* max-width 완전 제거 */
 #main {
   max-width: 100% !important;
 }
@@ -33,39 +28,46 @@ html {
   max-width: 100% !important;
 }
 
-/* 저자 사이드바 */
+/* 본문 라인 간격 */
+.page__content {
+  line-height: 1.8;
+}
+
+/* 저자 사이드바 폭 줄이기 */
 .sidebar.sticky {
   @include breakpoint($large) {
     width: 180px;
   }
 }
 
+/* 저자 프로필 이미지 크기 */
 .author__avatar img {
   max-width: 80px;
 }
 
 /* 코드 블록 */
 code, pre {
-  font-size: 0.85em;
+  font-size: 0.88em;
 }
 
 /* 제목 */
-h1 { font-size: 1.6em; }
-h2 { 
-  font-size: 1.3em;
+h1, h2, h3 {
+  font-weight: 700;
+}
+
+h2 {
   border-bottom: 1px solid #444;
   padding-bottom: 0.3em;
   margin-top: 1.8em;
 }
-h3 { font-size: 1.1em; }
 
 /* 테이블 */
 table {
   width: 100%;
-  font-size: 0.88em;
+  font-size: 0.9em;
 }
 
-/* 포스트 목록 */
+/* 포스트 목록 간격 */
 .list__item {
   margin-bottom: 2em;
 }
