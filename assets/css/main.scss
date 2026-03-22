@@ -1,0 +1,66 @@
+---
+# Only the main Sass file needs front matter (the dashes are enough)
+---
+
+@charset "utf-8";
+
+@import "minimal-mistakes/skins/dark"; // 다크 테마
+@import "minimal-mistakes"; // 기본 스타일
+
+/* =====================
+   커스텀 스타일 오버라이드
+   ===================== */
+
+/* 본문 너비 확장 (기본 700px → 900px) */
+.page__content {
+  font-size: 1.05em;
+  line-height: 1.8;
+}
+
+.page {
+  width: 100%;
+  padding-right: 0;
+}
+
+/* 사이드바 있을 때 본문 너비 */
+.sidebar ~ .page {
+  @include breakpoint($large) {
+    width: calc(100% - #{$right-sidebar-width-narrow});
+    padding-right: $right-sidebar-width-narrow;
+  }
+  @include breakpoint($x-large) {
+    width: calc(100% - #{$right-sidebar-width});
+    padding-right: $right-sidebar-width;
+  }
+}
+
+/* 컨텐츠 최대 너비 */
+#main {
+  max-width: 1200px;
+}
+
+/* 코드 블록 폰트 크기 */
+code, pre {
+  font-size: 0.9em;
+}
+
+/* 제목 스타일 */
+h1, h2, h3 {
+  font-weight: 700;
+}
+
+h2 {
+  border-bottom: 1px solid #444;
+  padding-bottom: 0.3em;
+}
+
+/* 테이블 스타일 */
+table {
+  width: 100%;
+  font-size: 0.9em;
+}
+
+/* 포스트 목록 카드 간격 */
+.list__item {
+  margin-bottom: 2em;
+}
