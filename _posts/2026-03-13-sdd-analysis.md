@@ -1,9 +1,9 @@
 ---
-layout: single
-title: "sdd analysis"
-date: 2026-03-13
-categories: ["개발기록"]
-author_profile: true
+layout: post
+title: "SDD 도구 실험: 문서화가 코드 품질을 보장하는가?"
+date: 2026-03-13 00:00:00 +0900
+categories: [개발기록]
+tags: [sdd, ai, 개발]
 ---
 
 # SDD 도구 실험: 문서화가 코드 품질을 보장하는가?
