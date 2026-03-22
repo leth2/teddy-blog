@@ -1,9 +1,9 @@
 ---
-layout: single
-title: "cline dev agent"
-date: 2026-03-14
-categories: ["개발기록"]
-author_profile: true
+layout: post
+title: "cline-dev-agent — ACP 프로토콜 탐험기"
+date: 2026-03-14 00:00:00 +0900
+categories: [개발기록]
+tags: [sdd, ai, 개발]
 ---
 
 # cline-dev-agent — ACP 프로토콜 탐험기
