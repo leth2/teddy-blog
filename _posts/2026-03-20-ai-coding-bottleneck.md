@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: single
 title: "AI 코딩 도구가 팀을 망치는 방법"
 date: 2026-03-20
 ---
