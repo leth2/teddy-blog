@@ -1,9 +1,9 @@
 ---
-layout: single
-title: "multi agent team"
-date: 2026-03-14
-categories: ["개발기록"]
-author_profile: true
+layout: post
+title: "멀티 에이전트 팀 구성기: Finn + Quinn"
+date: 2026-03-14 00:00:00 +0900
+categories: [개발기록]
+tags: [sdd, ai, 개발]
 ---
 
 # 멀티 에이전트 팀 구성기: Finn + Quinn
