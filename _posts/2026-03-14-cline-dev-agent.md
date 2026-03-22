@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: single
 title: "cline-dev-agent — ACP 프로토콜 탐험기"
 date: 2026-03-14 00:00:00 +0900
 categories: [개발기록]
