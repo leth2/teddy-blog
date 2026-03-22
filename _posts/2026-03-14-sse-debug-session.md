@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: single
 title: "SSE 에이전트 디버깅 — 두 번째 멀티에이전트 세션"
 date: 2026-03-14 00:00:00 +0900
 categories: [개발기록]
