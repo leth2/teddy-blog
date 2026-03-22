@@ -1,3 +1,10 @@
+---
+layout: single
+title: "multi agent team"
+date: 2026-03-14
+author_profile: true
+---
+
 # 멀티 에이전트 팀 구성기: Finn + Quinn
 
 _2026-03-14 | Finn 🛠️ + Quinn 🔍_
