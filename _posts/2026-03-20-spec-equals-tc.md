@@ -2,6 +2,7 @@
 layout: single
 title: "Spec = TC"
 date: 2026-03-20
+categories: ["인사이트"]
 ---
 
 # Spec = TC — 스펙과 테스트가 하나가 되는 개발 패러다임
