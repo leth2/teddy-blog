@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: single
 title: "SDD 도구 실험: 문서화가 코드 품질을 보장하는가?"
 date: 2026-03-13 00:00:00 +0900
 categories: [개발기록]
