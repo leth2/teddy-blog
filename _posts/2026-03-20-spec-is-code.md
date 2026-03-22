@@ -2,6 +2,7 @@
 layout: single
 title: "스펙은 코드다"
 date: 2026-03-20
+categories: ["인사이트"]
 ---
 
 # 스펙은 코드다 — AI 시대에 명세가 핵심 자산이 되는 이유
