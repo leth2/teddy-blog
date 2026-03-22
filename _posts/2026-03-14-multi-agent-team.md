@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: single
 title: "멀티 에이전트 팀 구성기: Finn + Quinn"
 date: 2026-03-14 00:00:00 +0900
 categories: [개발기록]
