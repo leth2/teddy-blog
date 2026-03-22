@@ -1,9 +1,9 @@
 ---
-layout: single
-title: "sdd triangle"
-date: 2026-03-13
-categories: ["개발기록"]
-author_profile: true
+layout: post
+title: "SDD 삼각형 — 스펙, 테스트, 코드는 항상 함께 움직여야 한다"
+date: 2026-03-13 00:00:00 +0900
+categories: [개발기록]
+tags: [sdd, ai, 개발]
 ---
 
 # SDD 삼각형 — 스펙, 테스트, 코드는 항상 함께 움직여야 한다
