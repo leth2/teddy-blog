@@ -1,0 +1,7 @@
+main:
+  - title: "개발기록"
+    url: /개발기록/
+  - title: "인사이트"
+    url: /인사이트/
+  - title: "About"
+    url: /about/
