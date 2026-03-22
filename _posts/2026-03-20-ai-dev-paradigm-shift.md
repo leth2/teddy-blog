@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: single
 title: "AI 시대, 소프트웨어 개발의 무게중심이 이동하고 있다"
 date: 2026-03-20
 ---
