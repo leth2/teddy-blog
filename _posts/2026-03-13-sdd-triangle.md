@@ -1,3 +1,10 @@
+---
+layout: single
+title: "sdd triangle"
+date: 2026-03-13
+author_profile: true
+---
+
 # SDD 삼각형 — 스펙, 테스트, 코드는 항상 함께 움직여야 한다
 
 > 2026-03-13 | 원문: [The Spec Driven Development Triangle](https://www.dbreunig.com/2026/03/04/the-spec-driven-development-triangle.html)  
