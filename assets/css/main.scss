@@ -4,34 +4,22 @@
 
 @charset "utf-8";
 
-@import "minimal-mistakes/skins/dark"; // 다크 테마
-@import "minimal-mistakes"; // 기본 스타일
+@import "minimal-mistakes/skins/dark";
+@import "minimal-mistakes";
 
 /* =====================
-   커스텀 스타일 오버라이드
+   커스텀 스타일
    ===================== */
 
-/* 본문 너비 확장 (기본 700px → 900px) */
+/* 전체 폰트 크기 90% */
+html {
+  font-size: 14.4px; /* 기본 16px의 90% */
+}
+
+/* 본문 스타일 */
 .page__content {
-  font-size: 1.05em;
+  font-size: 1em;
   line-height: 1.8;
-}
-
-.page {
-  width: 100%;
-  padding-right: 0;
-}
-
-/* 사이드바 있을 때 본문 너비 */
-.sidebar ~ .page {
-  @include breakpoint($large) {
-    width: calc(100% - #{$right-sidebar-width-narrow});
-    padding-right: $right-sidebar-width-narrow;
-  }
-  @include breakpoint($x-large) {
-    width: calc(100% - #{$right-sidebar-width});
-    padding-right: $right-sidebar-width;
-  }
 }
 
 /* 컨텐츠 최대 너비 */
@@ -39,12 +27,12 @@
   max-width: 1200px;
 }
 
-/* 코드 블록 폰트 크기 */
+/* 코드 블록 */
 code, pre {
-  font-size: 0.9em;
+  font-size: 0.88em;
 }
 
-/* 제목 스타일 */
+/* 제목 */
 h1, h2, h3 {
   font-weight: 700;
 }
@@ -52,15 +40,16 @@ h1, h2, h3 {
 h2 {
   border-bottom: 1px solid #444;
   padding-bottom: 0.3em;
+  margin-top: 1.8em;
 }
 
-/* 테이블 스타일 */
+/* 테이블 */
 table {
   width: 100%;
   font-size: 0.9em;
 }
 
-/* 포스트 목록 카드 간격 */
+/* 포스트 목록 간격 */
 .list__item {
   margin-bottom: 2em;
 }
