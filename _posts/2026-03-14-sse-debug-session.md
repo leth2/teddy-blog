@@ -1,9 +1,9 @@
 ---
-layout: single
-title: "sse debug session"
-date: 2026-03-14
-categories: ["개발기록"]
-author_profile: true
+layout: post
+title: "SSE 에이전트 디버깅 — 두 번째 멀티에이전트 세션"
+date: 2026-03-14 00:00:00 +0900
+categories: [개발기록]
+tags: [sdd, ai, 개발]
 ---
 
 # SSE 에이전트 디버깅 — 두 번째 멀티에이전트 세션
