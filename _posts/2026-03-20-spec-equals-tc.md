@@ -1,8 +1,9 @@
 ---
-layout: single
-title: "Spec = TC"
-date: 2026-03-20
-categories: ["인사이트"]
+layout: post
+title: "Spec = TC — 스펙과 테스트가 하나가 되는 개발 패러다임"
+date: 2026-03-20 00:00:00 +0900
+categories: [인사이트]
+tags: [ai, sdd, 개발방법론]
 ---
 
 # Spec = TC — 스펙과 테스트가 하나가 되는 개발 패러다임
