@@ -1,9 +1,9 @@
 ---
-layout: single
-title: "harness codex"
-date: 2026-03-13
-categories: ["개발기록"]
-author_profile: true
+layout: post
+title: "AI가 코드를 100만 줄 썼다 — 사람이 한 줄도 안 건드리고"
+date: 2026-03-13 00:00:00 +0900
+categories: [개발기록]
+tags: [sdd, ai, 개발]
 ---
 
 # AI가 코드를 100만 줄 썼다 — 사람이 한 줄도 안 건드리고
