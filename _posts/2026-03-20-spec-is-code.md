@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: single
 title: "스펙은 코드다"
 date: 2026-03-20
 ---
