@@ -2,6 +2,7 @@
 layout: single
 title: "harness codex"
 date: 2026-03-13
+categories: ["개발기록"]
 author_profile: true
 ---
 
