@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: single
 title: "SSE 버전 디버깅기: 5개 버그와 하나의 교훈"
 date: 2026-03-14 00:00:00 +0900
 categories: [개발기록]
