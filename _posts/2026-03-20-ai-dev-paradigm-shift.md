@@ -1,8 +1,9 @@
 ---
-layout: single
+layout: post
 title: "AI 시대, 소프트웨어 개발의 무게중심이 이동하고 있다"
-date: 2026-03-20
-categories: ["인사이트"]
+date: 2026-03-20 00:00:00 +0900
+categories: [인사이트]
+tags: [ai, sdd, 개발방법론]
 ---
 
 # AI 시대, 소프트웨어 개발의 무게중심이 이동하고 있다
