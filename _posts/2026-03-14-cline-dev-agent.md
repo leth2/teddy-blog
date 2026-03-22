@@ -1,3 +1,10 @@
+---
+layout: single
+title: "cline dev agent"
+date: 2026-03-14
+author_profile: true
+---
+
 # cline-dev-agent — ACP 프로토콜 탐험기
 
 **날짜:** 2026-03-14 (오후 세션)  
