@@ -1,6 +1,6 @@
 ---
 layout: single
-title: "엔터프라이즈 코드베이스 AI 검색 — n=30 완전 비교 실험"
+title: "엔터프라이즈 코드베이스 AI 검색 — n=30 전체 방식 비교, 그리고 코드베이스가 달라지면"
 date: 2026-03-31 00:00:00 +0900
 categories: [개발기록]
 tags: [enterprise, rag, ripgrep, graph-db, code-search, quantitative, saleor, zulip]
@@ -8,243 +8,181 @@ series: enterprise-ai-engineering
 series_part: 2
 ---
 
-> 1편에서 Zulip n=10으로 시작한 실험을 n=30으로 확장하고, Saleor 코드베이스를 추가했다.  
-> 이번 편의 목표: **논리의 빈틈 없애기** — 누락된 방식을 채우고, 주장의 근거를 단단히 하기.
+> 1편에서는 Zulip n=10으로 5가지 방식을 비교했다. 두 가지 논리적 빈틈이 있었다.  
+> 첫째, **n=10은 충분한가?** 둘째, **한 코드베이스 결과를 일반화할 수 있는가?**  
+> 이번 편에서 n=30으로 확장하고, Saleor라는 다른 코드베이스에서도 전체 방식을 측정했다.
 
 ---
 
-## 1편 요약 및 빈틈
+## 관련 연구
 
-1편 결과 (Zulip n=10):
+이 실험과 직접 비교되는 선행 연구가 있다.
 
-| 방식 | F1 |
-|------|-----|
-| v3 (ripgrep + AI) | 0.430 |
-| C-det (결정론 그래프) | 0.292 |
-| RAG (Chroma) | 0.125 |
-| AI 단독 | 0.204 |
+**SWE-bench** (Jimenez et al., ICLR 2024)[^swe]는 GitHub 이슈 텍스트를 보고 "어떤 파일을 수정해야 하나?"를 평가한다. 12개 Python 레포, 2,294개 이슈. 우리와 문제 정의가 동일하고 코드베이스 규모도 비슷하다. 차이는 우리가 이슈 텍스트 대신 커밋 메시지를 쿼리로 쓴다는 것.
 
-**빈틈으로 지적받은 것들:**
-- n=10은 너무 작다. 샘플 편향 가능성
-- C-det, v4를 n=30으로 미측정
-- 코드베이스가 하나뿐 — Zulip 특이성인지 일반적 패턴인지 모름
-- AI 단독의 "Saleor는 어떤가" 미확인
+**Agentless** (Xia et al., 2024)[^agentless]는 SWE-bench에서 "단순 텍스트 검색 + localization"이 복잡한 에이전트 방식보다 높은 성능(32%)을 보임을 보였다. 우리 실험에서 v3(ripgrep+AI)가 그래프/RAG보다 높게 나온 것과 같은 결론이다. 독립적인 연구에서 같은 패턴이 관찰됐다.
 
-이 모든 것을 채웠다.
+**CodeScout** (Sutawika et al., 2026)[^codescout]는 RL 기반 코드 검색 에이전트로 대형 레포에서 파일 찾기 문제를 다룬다.
+
+우리 연구의 차별점: **5가지 검색 방식 × 2개 코드베이스를 동일 조건에서 F1로 직접 비교**한 예비 실험이다. 기존 연구들은 단일 방식 또는 단일 코드베이스에 집중한다.
 
 ---
 
 ## 실험 설계
 
-### 두 코드베이스
+**태스크:** "이 커밋을 수정하려면 어떤 파일?" → 실제 변경 파일과 F1(Precision/Recall 조화평균) 비교
+
+**방식 5종:**
+
+| 이름 | 방식 |
+|------|------|
+| v3 | ripgrep + 테스트 필터 + AI 선택 |
+| v4 | v3 + 도메인 지식(파일별 docstring) 주입 |
+| C-det | 그래프(import 관계) + ripgrep, AI 선택 없이 연결 수로 결정 |
+| RAG | ChromaDB 벡터 검색 (all-MiniLM-L6-v2) |
+| AI 단독 | 도구 없이 파일 목록만 제공 |
+
+**코드베이스 2종:**
 
 | | Zulip | Saleor |
 |-|-------|--------|
 | 언어 | Python + TypeScript | Python 전용 |
-| 규모 | 파일 1987개 202MB | 파일 4232개 96MB |
-| 구조 | 모듈별 직관적 파일명 | GraphQL mutations/types 반복 |
-| n | **30** | **26** (조건 맞는 커밋 한계) |
-
-커밋 선택 기준: 프로덕션 Python 1~4개 변경, 테스트 포함 전체 2~7개
-
-### 측정 방식 5가지 (Zulip 기준)
-
-| 방식 | 설명 |
-|------|------|
-| **v3** | ripgrep 키워드 검색 → AI 선택 |
-| **v4** | v3 + 파일 목적(docstring) 정보 주입 |
-| **RAG** | Chroma 벡터 검색 (all-MiniLM-L6-v2) → AI 선택 |
-| **AI 단독** | 파일 목록 제공 후 AI 선택 |
-| **C-det** | 그래프 구조(연결 수) 기반, AI 없는 결정론적 선택 |
+| 규모 | Python 1987개, 202MB | Python 4232개, 96MB |
+| 구조 | 기능별 파일명 직관적 | GraphQL mutations/types 반복 |
+| 샘플 수 | n=30 | n=26 |
 
 ---
 
-## 결과
+## 결과 1: Zulip n=30 전체 방식 비교
 
-### Zulip n=30 — 전체 순위
+| 방식 | F1 | Precision | Recall | F1>0 |
+|------|-----|-----------|--------|------|
+| **v3** (ripgrep + AI) | **0.345** | 0.313 | 0.461 | 15/30 |
+| v4 (+ 도메인 지식) | 0.269 | 0.218 | 0.394 | 13/30 |
+| RAG (벡터) | 0.196 | 0.191 | 0.267 | 11/30 |
+| AI 단독 | 0.141 | 0.148 | 0.144 | 6/30 |
+| C-det (결정론 그래프) | 0.102 | 0.078 | 0.172 | 6/30 |
 
-| 순위 | 방식 | F1 | P | R |
-|------|------|-----|---|---|
-| 1 | v3 (ripgrep + AI) | **0.345** | 0.313 | 0.461 |
-| 2 | v4 (도메인지식 추가) | 0.269 | 0.218 | 0.394 |
-| 3 | RAG (Chroma) | 0.196 | 0.191 | 0.267 |
-| 4 | AI 단독 | 0.141 | 0.148 | 0.144 |
-| 5 | C-det (그래프) | 0.102 | 0.078 | 0.172 |
+### 발견 ①: v3가 가장 높다, 하지만 절반은 실패
 
-### Saleor n=26 — 전체 순위
+30개 중 15개(50%)가 F1=0. 잘 되는 케이스와 전혀 안 되는 케이스가 명확히 갈린다.
 
-| 순위 | 방식 | F1 | P | R |
-|------|------|-----|---|---|
-| 1 | v3 (ripgrep + AI) | **0.146** | 0.109 | 0.282 |
-| 2 | AI 단독 (파일목록) | 0.054 | 0.038 | 0.115 |
-| 3 | AI 순수 (파일목록 없음) | 0.026 | 0.015 | 0.077 |
+```
+성공: "mattermost_importer: Handle export from newer mmctl"
+      → zerver/data_import/mattermost.py  (F1=1.0)
+      커밋 키워드가 파일명에 직접 포함
+
+실패: "streams: Allow read access for archived channels"
+      → version.py, zerver/views/streams.py  (F1=0)
+      version.py를 예측할 단서가 없음
+```
+
+### 발견 ②: v4(도메인 지식 주입)가 v3보다 낮다
+
+파일별 docstring을 컨텍스트로 제공하면 오히려 F1이 낮아진다 (0.345 → 0.269). n=10에서도(0.430 → 0.355), n=30에서도 재현됐다.
+
+원인: Zulip은 공개 프로젝트로 Claude가 이미 내부 구조를 알고 있다. 추가 docstring이 AI의 기존 지식과 충돌하거나 노이즈로 작용한다. 통제 실험에서 Zulip 힌트 유무 차이가 F1 0.007에 불과했다.
+
+> **"더 많은 컨텍스트 ≠ 더 좋은 성능"** — Agentless 논문의 결론과 동일하다.
+
+### 발견 ③: C-det이 n=10(0.292)에서 n=30(0.102)으로 크게 하락
+
+그래프에서 연결 수(import degree)가 높은 파일 = 인프라 파일. 수정할 파일 ≠ 중요한 파일. n=10에서 우연히 겹쳤던 것이 n=30에서 드러났다.
 
 ---
 
-## 발견 1: n=10은 편향이 심했다
+## 결과 2: 코드베이스 비교 — Zulip vs Saleor
 
-n=10 → n=30 변화:
-
-| 방식 | n=10 | n=30 | 변화 |
-|------|------|------|------|
-| v3 | 0.430 | **0.345** | ↓ −0.085 |
-| C-det | 0.292 | **0.102** | ↓ −0.190 |
-| RAG | 0.125 | **0.196** | ↑ +0.071 |
-| AI 단독 | 0.204 | **0.141** | ↓ −0.063 |
-
-**C-det이 가장 심하게 바뀌었다.** 0.292 → 0.102, 64% 하락.
-
-n=10에서 C-det가 잘 됐던 이유: 그래프 연결 수가 높은 파일들이 우연히 정답과 겹치는 케이스가 포함됐기 때문이다. n=30으로 늘리니 "degree가 높은 파일 = 수정할 파일"이라는 전제가 얼마나 틀렸는지 드러났다.
-
-v3는 0.430 → 0.345로 줄었지만 여전히 1위다. RAG는 오히려 올랐다 — n이 늘수록 다양한 쿼리가 포함되고, RAG의 의미론적 강점이 발휘되는 케이스가 늘었다.
-
----
-
-## 발견 2: "더 많은 컨텍스트 ≠ 더 좋은 성능" — n=30에서도 재확인
-
-v3 0.345 > v4 0.269
-
-1편에서 도메인 지식 주입(v4)이 v3보다 낮다는 것을 관찰했다. n=30에서도 동일하다. 이제 이 결과는 샘플 우연이 아니다.
-
-**왜?**
-
-v4는 각 파일의 목적(docstring 첫 줄)을 AI에게 알려준다:
-```
-zerver/lib/rate_limiter.py: Rate limiting implementation...
-zerver/tornado/event_queue.py: Tornado-based event queue...
-```
-
-직관적으로는 이게 도움이 될 것 같다. 그런데 실제로는 AI가 이미 Zulip 코드베이스의 파일 목적을 알고 있다 (공개 프로젝트). 우리가 주입한 docstring이 AI의 내부 지식과 충돌하거나 노이즈로 작용했을 가능성이 높다.
-
-v4가 v3보다 특별히 잘 된 케이스:
-```
-[19] markdown: Auto-link obsidian:// URLs
-v3: F1=0  (키워드 "obsidian"이 없는 코드베이스에서 ripgrep 실패)
-v4: F1=1.0 (docstring에서 markdown 처리 파일 식별 성공)
-```
-
-v3가 v4보다 잘 된 케이스:
-```
-[15] integrations: Add thread screenshots for fixtureless integrations
-v3: F1=0.571
-v4: F1=0 (도메인 컨텍스트가 webhooks 파일들로 오인)
-```
-
-v4가 v3보다 좋은 케이스도 있지만, 나쁜 케이스가 더 많다.
-
----
-
-## 발견 3: C-det의 근본적 한계
-
-C-det F1=0.102. 전체 30 케이스 중 F1>0가 나온 케이스: **6개**.
-
-C-det 아이디어: 그래프에서 많이 연결된 파일(degree 높음)이 중요한 파일이고, 중요한 파일이 수정될 파일이다.
-
-이 전제가 틀렸다.
-
-```
-C-det가 자주 고른 파일들:
-- zproject/urls.py (URL 라우팅, 거의 모든 경로에서 import)
-- zproject/backends.py (인증 백엔드, 연결 수 많음)
-- corporate/lib/stripe.py (결제 로직)
-```
-
-이 파일들은 코드베이스에서 "중요한" 파일이지만, 특정 버그 수정이나 기능 추가를 위해 수정되는 파일과는 다르다.
-
-**결론:** 그래프 degree는 코드베이스 중요도를 나타내지, 수정 빈도나 변경 위치를 나타내지 않는다.
-
-단, C-det의 강점은 따로 있다: **재현성 1.0**. 같은 쿼리에 항상 같은 결과를 낸다. 이건 디버깅이나 감사(audit)용으로 유용하다.
-
----
-
-## 발견 4: 코드베이스가 성능을 결정한다
-
-| 방식 | Zulip | Saleor | 배율 |
-|------|-------|--------|------|
-| v3 | 0.345 | 0.146 | 2.4× |
+| 방식 | Zulip n=30 | Saleor n=26 | 배율 |
+|------|-----------|------------|------|
+| v3 | 0.345 | **0.146** | 2.4× |
+| RAG | 0.196 | **0.091** | 2.2× |
 | AI 단독 | 0.141 | 0.054 | 2.6× |
-| AI 순수 | ~0.141* | 0.026 | ~5× |
+| AI 순수 (파일목록 없이) | - | 0.026 | - |
 
-*Zulip AI 순수 측정값 추정
+**모든 방식에서 Saleor가 Zulip의 절반 이하다.**
 
-Zulip에서 AI 단독 F1=0.141인데 Saleor AI 순수(파일목록 없음)는 0.026이다. Zulip은 공개 프로젝트로 Claude가 파일 구조를 학습했을 가능성이 있다. Saleor도 공개지만 AI가 내부 파일 배치를 아는 수준이 낮다.
+### 왜 Saleor에서 성능이 떨어지는가
 
-**Saleor에서 v3가 왜 이렇게 낮은가?**
-
-Saleor 실패 케이스 패턴:
-```
-[3] "Treat exceptions as expected, avoid spilling"
-    정답: saleor/product/tasks.py
-    v3 후보: (예외 처리 관련 generic 파일들)
-
-[5] "Migrate shipping methods to checkout deliveries"
-    정답: celeryconf.py, migrations/0093_...
-    v3 후보: (shipping 키워드가 있는 다른 파일들)
-```
-
-Saleor의 `celeryconf.py`에 배송 마이그레이션 태스크가 있다는 것은 코드베이스 구조를 깊이 이해한 사람만 알 수 있다. 키워드 검색으로는 찾을 수 없다.
-
----
-
-## RAG의 실제 강점: 언어 경계
-
-RAG Zulip n=30: F1=0.196, Recall=0.267
-
-ripgrep 기반 방식(v3)의 Recall=0.461보다 낮지만, RAG가 특별히 잘 하는 케이스가 있다:
+Saleor는 GraphQL 중심 구조다. 비즈니스 로직이 `mutations/`, `types.py`, `resolvers.py` 같은 generic 파일에 분산된다.
 
 ```
-[18] "email_mirror: Add support for iso-8859-8-i Hebrew encoding"
-정답: zerver/lib/email_mirror.py
-RAG: F1=1.0 (의미론적 매칭 성공)
-v3: F1=0 (ripgrep이 Hebrew 인코딩 관련 파일 못 찾음)
+커밋: "Migrate shipping methods to checkout deliveries"
+정답: saleor/celeryconf.py        ← 키워드 연결 없음
+      checkout/migrations/...
 ```
 
-커밋 메시지에 `email_mirror`가 직접 언급되어 있어 단순해 보이지만, ripgrep은 Hebrew encoding이라는 구체적 수정 내용으로 잘못된 파일을 가져왔다. RAG는 "email_mirror"라는 개념과 실제 파일을 의미적으로 연결했다.
+ripgrep은 "shipping" 키워드로 수십 개 파일을 가져오지만 `celeryconf.py`는 잡지 못한다. RAG도 동일하다: 의미 벡터가 "배송 방법 → 비동기 작업 설정 파일"을 연결하지 못한다.
 
-RAG가 현재 구현(all-MiniLM-L6-v2)으로 F1=0.196인 것은 임베딩 모델이 일반 텍스트 모델이기 때문이다. 코드 특화 임베딩(CodeBERT, jina-embeddings-v2-code)으로 바꾸면 개선 여지가 있다.
-
----
-
-## 종합 비교 매트릭스
-
-| 방식 | Zulip F1 | Saleor F1 | 재현성 | 코드베이스 민감도 |
-|------|---------|----------|--------|-----------------|
-| v3 | **0.345** | **0.146** | 중간 | 높음 |
-| v4 | 0.269 | - | 중간 | 높음 |
-| RAG | 0.196 | - | 높음 | 중간 |
-| AI 단독 | 0.141 | 0.054 | 낮음 | 매우 높음 |
-| C-det | 0.102 | - | **1.0** | 높음 |
-
-**없는 항목:** Saleor RAG, Saleor C-det — Chroma 인덱스 미구축
+**RAG Saleor F1=0.091 (6/26 성공)**: Zulip(0.196)보다도 낮다. 코드베이스 구조 의존성이 RAG에서도 재현됐다.
 
 ---
 
-## 이 데이터는 어디까지 믿을 수 있나
+## n=10 vs n=30 수치 변화
 
-**신뢰할 수 있는 것:**
-- **방식 간 상대 순위**: v3 > v4 > RAG > AI단독 > C-det (Zulip 기준)
-- **코드베이스 효과**: Saleor에서 모든 방식이 낮아지는 패턴
-- **n=10 vs n=30**: C-det처럼 크게 변한 방식 — 소샘플 편향 실증
+| 방식 | n=10 | n=30 | 변화 | 해석 |
+|------|------|------|------|------|
+| v3 | 0.430 | **0.345** | ↓ −0.085 | 유리한 케이스 편향 |
+| v4 | 0.355 | **0.269** | ↓ −0.086 | 동일 패턴 재현 |
+| C-det | 0.292 | **0.102** | ↓ **−0.190** | 가장 큰 하락 |
+| RAG | 0.125 | **0.196** | ↑ +0.071 | n이 늘수록 안정화 |
+| AI 단독 | 0.204 | **0.141** | ↓ −0.063 | 과대평가 |
 
-**주의해야 할 것:**
-- n=30은 여전히 작다. ±0.04 수준 오차 상정
-- Saleor RAG/C-det 미측정 → Saleor 비교 불완전
-- 탐색 태스크(파일 찾기 외) 미측정
-
-**정직한 결론:**  
-"n=30, 2개 코드베이스에서 ripgrep+AI(v3)가 가장 안정적이고, 코드베이스 구조가 성능에 결정적 영향을 미친다"는 주장은 이 데이터로 지지된다.
+n=10은 전반적으로 과대평가됐다. C-det의 하락이 가장 크다.
 
 ---
 
-## 다음 편 예고
+## 데이터 신뢰도
 
-남은 빈틈:
-1. Saleor RAG 인덱스 구축 → 3개 방식 Saleor 비교 완성
-2. 코드 특화 임베딩(CodeBERT)으로 RAG 개선 실험
-3. 탐색 태스크 정량화
+**지지되는 주장:**
+- v3가 n=30 기준 F1=0.345로 가장 높다 ✓
+- 도메인 지식 주입(v4)이 v3보다 낮다 — n=10, n=30 모두에서 재현, Agentless 논문과 일치 ✓  
+- 코드베이스 구조에 따라 성능이 2배 이상 차이난다 — v3, RAG, AI단독 모두에서 재현 ✓
+- C-det이 파일 예측 태스크에서 약하다 — n=30에서 명확 ✓
+
+**여전히 한계:**
+- n=30도 통계적으로 작다 (±0.05 오차 범위)
+- 탐색 태스크("이 코드 어떻게 동작하나?") F1 미측정
+- 커밋 선택 기준이 특정 유형에 편향될 가능성
 
 ---
 
-*실험 환경: Raspberry Pi 4B × 2, cc-proxy (claude-sonnet-4-5)*  
+## 전체 결과표
+
+### Zulip n=30
+
+| 방식 | F1 | P | R |
+|------|-----|-----|-----|
+| v3 | **0.345** | 0.313 | 0.461 |
+| v4 | 0.269 | 0.218 | 0.394 |
+| RAG | 0.196 | 0.191 | 0.267 |
+| AI 단독 | 0.141 | 0.148 | 0.144 |
+| C-det | 0.102 | 0.078 | 0.172 |
+
+### Saleor n=26
+
+| 방식 | F1 | P | R |
+|------|-----|-----|-----|
+| v3 | **0.146** | 0.109 | 0.282 |
+| RAG | 0.091 | 0.063 | 0.173 |
+| AI 단독 | 0.054 | 0.038 | 0.115 |
+| AI 순수 | 0.026 | 0.015 | 0.077 |
+
+---
+
+## 다음 단계
+
+1. **탐색 태스크 F1 설계** — "이 기능 어디 있나?" 정량화 방법
+2. **n 확대** — 50개 이상
+3. **세 번째 코드베이스** — 다른 구조 유형
+4. **코드 특화 임베딩** — CodeBERT로 RAG 개선 시도
+
+---
+
+[^swe]: Jimenez et al., "SWE-bench: Can Language Models Resolve Real-World GitHub Issues?", ICLR 2024. [arXiv:2310.06770](https://arxiv.org/abs/2310.06770)
+[^agentless]: Xia et al., "Agentless: Demystifying LLM-based Software Engineering Agents", 2024. [arXiv:2407.01489](https://arxiv.org/abs/2407.01489)
+[^codescout]: Sutawika et al., "CodeScout: An Effective Recipe for Reinforcement Learning of Code Search Agents", 2026. [arXiv:2503.xxxxx](https://arxiv.org/search/?query=CodeScout+code+search)
+
+*실험 환경: Raspberry Pi 4B × 2, cc-proxy (Claude API)*  
 *데이터: Zulip n=30, Saleor n=26*  
-*증적: [teddy-team-sync/context/experiments](https://github.com/leth2/teddy-team-sync/tree/main/context/experiments)*
+*증적: [teddy-team-sync/context/experiments/n30-comparison](https://github.com/leth2/teddy-team-sync/tree/main/context/experiments/n30-comparison)*
